@@ -1,0 +1,19 @@
+{
+  "global": {
+    "eval": false
+  },
+  "users": {
+    "134987945827368960": {
+      "dev": true,
+      "admin": true
+    },
+    "111476801762537472": {
+      "dev": true,
+      "admin": true
+    },
+    "90076279646212096": {
+      "dev": true,
+      "admin": true
+    }
+  }
+}

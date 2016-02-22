@@ -1,0 +1,25 @@
+{
+  "name": "DiscordBot",
+  "version": "1.0.0",
+  "description": "Bot for Discord app",
+  "readme": "README.md",
+  "maintainers": [],
+  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chalda/DiscordBot.git"
+  },
+  "license": "GNU",
+  "dependencies": {
+    "discord.js": "^6.0.0",
+    "nodesu": "^0.2.1",
+    "request": ">=2.58.0",
+    "underscore": "1.8.x",
+    "ytdl-core": "0.7.10",
+    "youtube-audio-stream": "0.0.19"
+  },
+  "scripts": {
+    "start": "node discord_bot.js"
+  },
+  "main": "discord_bot.js"
+}
