@@ -34,3 +34,6 @@ node_modules
 *.bat
 *.sh
 auth*.json
+json/nowPlaying.json
+json/songList.json
+.c9/
