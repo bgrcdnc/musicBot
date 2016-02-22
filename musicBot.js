@@ -485,13 +485,13 @@ function checkRole(id, user, role) {
                         remainingSec %= 60;
                         var remainingHou = parseInt(remainingMin / 60, 10);
                         remainingMin %= 60;
-    
+
                         var currentSec = playTime.aseconds;
                         var currentMin = parseInt(currentSec / 60, 10);
                         currentSec %= 60;
                         var currentHou = parseInt(currentMin / 60, 10);
                         currentMin %= 60;
-    
+
                         var reply1 = timeFormatString(currentHou, currentMin, currentSec);
                         var reply2 = timeFormatString(remainingHou, remainingMin, remainingSec);
                         bot.sendMessage(msg.channel, "**" + secondsToHms(playTime.aseconds) + " / " + secondsToHms(date2) + "**");
@@ -614,7 +614,7 @@ function checkRole(id, user, role) {
                     }
                     bot.joinVoiceChannel(msg.sender.voiceConnection);
                 } else {
-                    
+
                 }
             }
             catch (e){
@@ -635,7 +635,7 @@ function checkRole(id, user, role) {
                         playLists[pl].push(s);
                         updatePlayLists();
                         ytdl.getInfo("https://www.youtube.com/watch?v=" + s, function(err, videoInfo) {
-                            if(err) { 
+                            if(err) {
                                 bot.sendMessage(msg.channel, "**\"" + s + "\" şarkısı \"" + pl + "\" çalma listesine eklendi.**");
                             }
                             bot.sendMessage(msg.channel, "**\"" + videoInfo.title + "\" şarkısı \"" + pl + "\" çalma listesine eklendi.**");
@@ -645,7 +645,7 @@ function checkRole(id, user, role) {
                             if(playLists[pl].indexOf(s) > -1) {
                                 playLists[pl].splice(playLists[pl].indexOf(s), 1);
                                 ytdl.getInfo("https://www.youtube.com/watch?v=" + s, function(err, videoInfo) {
-                                    if(err) { 
+                                    if(err) {
                                         bot.sendMessage(msg.channel, "**\"" + s + "\" şarkısı \"" + pl + "\" çalma listesinden silindi.**");
                                     }
                                     bot.sendMessage(msg.channel, "**\"" + videoInfo.title + "\" şarkısı \"" + pl + "\" çalma listesinden silindi.**");
@@ -841,15 +841,14 @@ bot.on("message", function (msg) {
             if(suffix) {
                 if(commands.hasOwnProperty(suffix)) {
                     var c = commands[suffix];
-                    console.log(c + " " + commands[suffix] + " " + suffix);
-                    var info = "**" + suffix + "**";
+                    var info = "**." + suffix + "**";
                     var usage = commands[suffix].usage;
                     var hidden = commands[suffix].hidden;
                     var disabled = commands[suffix].disabled;
                     if(hidden || disabled) {
                         return;
                     }
-                    
+
                     var description = commands[suffix].description;
                     if(description){
                     	info += " - " + description;
@@ -897,7 +896,7 @@ bot.on("message", function (msg) {
 			    }
 
 			} catch(e){
-				
+
 			}
 		}
     } else {
@@ -918,7 +917,7 @@ if(isset(AuthDetails.logtoken)) {
                 updateAuth();
             }
         } catch(e) {
-            
+
         }
     });
 }
