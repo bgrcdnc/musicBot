@@ -216,55 +216,64 @@ function playFromList(msg) {
 
 function playFromID(msg, suffix, pInfo) {
     try {
-    if(pTimeout) { // eğer şarkının bitişi için bir timeout atanmışsa
-        stopPlaying();
-    }
-    if(!isset(pInfo))
-        pInfo = false;
-        ytdl.getInfo("http://www.youtube.com/watch?v=" + suffix, null, function(err, videoInfo) {
-            if(err) {
-                console.log("Error ytdl.getInfo: " + err);
+        if(bot.voiceConnection) {
+            if(pTimeout) { // eğer şarkının bitişi için bir timeout atanmışsa
+                stopPlaying();
             }
-            if(isset(videoInfo)) {
-                if(pInfo) {
-                    bot.sendMessage(msg.channel, "**Çalıyor:** " + videoInfo.title + " **["+ secondsToHms(videoInfo.length_seconds) + "]" + " / Ekleyen : " + pInfo.submitterName + "**");
-                } else {
-                    bot.sendMessage(msg.channel, "**Çalıyor:** " + videoInfo.title + " **["+ secondsToHms(videoInfo.length_seconds) + "]" + " / Ekleyen : " + msg.sender.name + "**");
+            if(!isset(pInfo))
+                pInfo = false;
+            ytdl.getInfo("http://www.youtube.com/watch?v=" + suffix, null, function(err, videoInfo) {
+                if(err) {
+                    console.log("Error ytdl.getInfo: " + err);
                 }
-                stream = request("https://request-bgrcdnc.c9users.io:8081/?data=" + suffix);
-                bot.voiceConnection.playRawStream(stream, {Volume : 0.1});
-                pTimeout = setTimeout(
-                    function() {
-                        bot.sendMessage(msg.channel, "**Şarkı bitti.**");
-                        stopPlaying();
-                        playFromList(msg);
-                    },
-                    (parseInt(videoInfo.length_seconds,10) + 2) * 1000
-                );
-                if(pInfo) {
-                    nowPlaying = {
-                        startTime: Date(),
-                        songName: videoInfo.title,
-                        songID: suffix,
-                        songLength: videoInfo.length_seconds,
-                        submitterName: pInfo.submitterName,
-                        submitterID: pInfo.submitterID
-                    };
+                if(isset(videoInfo)) {
+                    if(pInfo) {
+                        bot.sendMessage(msg.channel, "**Çalıyor:** " + videoInfo.title + " **["+ secondsToHms(videoInfo.length_seconds) + "]" + " / Ekleyen : " + pInfo.submitterName + "**");
+                    } else {
+                        bot.sendMessage(msg.channel, "**Çalıyor:** " + videoInfo.title + " **["+ secondsToHms(videoInfo.length_seconds) + "]" + " / Ekleyen : " + msg.sender.name + "**");
+                    }
+                    stream = request("https://request-bgrcdnc.c9users.io:8081/?data=" + suffix);
+                    bot.voiceConnection.playRawStream(stream, {Volume : 0.1});
+                    pTimeout = setTimeout(
+                        function() {
+                            bot.sendMessage(msg.channel, "**Şarkı bitti.**");
+                            stopPlaying();
+                            playFromList(msg);
+                        },
+                        (parseInt(videoInfo.length_seconds,10) + 2) * 1000
+                    );
+                    if(pInfo) {
+                        nowPlaying = {
+                            startTime: Date(),
+                            songName: videoInfo.title,
+                            songID: suffix,
+                            songLength: videoInfo.length_seconds,
+                            submitterName: pInfo.submitterName,
+                            submitterID: pInfo.submitterID
+                        };
+                    } else {
+                        nowPlaying = {
+                            startTime: Date(),
+                            songName: videoInfo.title,
+                            songID: suffix,
+                            songLength: videoInfo.length_seconds,
+                            submitterName: msg.sender.name,
+                            submitterID: msg.sender.id
+                        };
+                    }
+                    updateNowPlaying();
                 } else {
-                    nowPlaying = {
-                        startTime: Date(),
-                        songName: videoInfo.title,
-                        songID: suffix,
-                        songLength: videoInfo.length_seconds,
-                        submitterName: msg.sender.name,
-                        submitterID: msg.sender.id
-                    };
+                    bot.sendMessage(msg.channel, msg.sender + "**, şarkı eklenemedi!**");
                 }
-                updateNowPlaying();
+            });
+        } else {
+            if(!discoChannel) {
+                discoChannel = bot.channels.get("id", "150668333010649088");
+                bot.joinVoiceChannel(discoChannel);
             } else {
-                bot.sendMessage(msg.channel, msg.sender + "**, şarkı eklenemedi!**");
+                bot.joinVoiceChannel(discoChannel);
             }
-        });
+        }
     } catch(e) {
         console.log("Error at playfromid : " + e);
     }
@@ -592,6 +601,22 @@ function checkRole(id, user, role) {
 	    }
 	},
     /*land of hidden*/
+    "r":{
+        hidden:"1",
+        process: function(bot,msg,suffix) {
+            try {
+                if(!discoChannel) {
+                    discoChannel = bot.channels.get("id", "150668333010649088");
+                    bot.joinVoiceChannel(discoChannel);
+                } else {
+                    bot.joinVoiceChannel(discoChannel);
+                }
+            }
+            catch (e){
+                console.log("Error çl at " + msg.channel.name + " : " + e);
+            }
+        }
+    },
     "çl":{
         hidden:"1",
         process: function(bot,msg,suffix) {
