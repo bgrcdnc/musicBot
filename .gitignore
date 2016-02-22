@@ -31,10 +31,14 @@ node_modules
 
 # Optional REPL history
 .node_repl_history
+
+#.c9 directory
+.c9
+
+#custom
 *.bat
 *.sh
 auth*.json
 json/nowPlaying.json
 json/songList.json
-.*
 !/.gitignore

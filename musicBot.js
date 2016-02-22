@@ -602,18 +602,23 @@ function checkRole(id, user, role) {
 	},
     /*land of hidden*/
     "r":{
+        disabled:"1",
         hidden:"1",
         process: function(bot,msg,suffix) {
             try {
-                if(!discoChannel) {
-                    discoChannel = bot.channels.get("id", "150668333010649088");
-                    bot.joinVoiceChannel(discoChannel);
+                if(checkPermission(msg.sender.id, "dev")) {
+                    if(bot.voiceConnection)
+                        bot.voiceConnection.destroy();
+                    if(!discoChannel) {
+                        discoChannel = bot.channels.get("id", "150668333010649088");
+                    }
+                    bot.joinVoiceChannel(msg.sender.voiceConnection);
                 } else {
-                    bot.joinVoiceChannel(discoChannel);
+                    
                 }
             }
             catch (e){
-                console.log("Error çl at " + msg.channel.name + " : " + e);
+                console.log("Error r at " + msg.channel.name + " : " + e);
             }
         }
     },
