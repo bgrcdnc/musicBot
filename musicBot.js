@@ -864,7 +864,7 @@ bot.on("message", function (msg) {
                 }
             } else {
 			    for(var c in commands) {
-			    	var info = "**" + c + "**";
+			    	var info = "**." + c + "**";
 			    	var usage = commands[c].usage;
                     var hidden = commands[c].hidden;
                     var disabled = commands[c].disabled;
@@ -880,7 +880,7 @@ bot.on("message", function (msg) {
 			    texttosend += "\r\nTek bir komut hakkında daha çok bilgi için \".help <komut>\"";
 			    texttosend += "\r\nBot sadece <#150713395589545984> kanalında çalışmaktadır.";
             }
-            bot.sendMessage(msg.channel, texttosend);
+            bot.sendMessage(msg.channel,texttosend);
             } catch(e) {
                 console.log("Error at help: " + e);
             }
