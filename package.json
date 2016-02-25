@@ -1,5 +1,5 @@
 {
-  "name": "DiscordBot",
+  "name": "musicBot",
   "version": "1.0.0",
   "description": "Bot for Discord app",
   "readme": "README.md",
@@ -7,7 +7,7 @@
   "author": "",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/chalda/DiscordBot.git"
+    "url": ""
   },
   "license": "GNU",
   "dependencies": {
@@ -19,7 +19,7 @@
     "youtube-audio-stream": "0.0.19"
   },
   "scripts": {
-    "start": "node discord_bot.js"
+    "start": "node musicBot.js"
   },
-  "main": "discord_bot.js"
+  "main": "node musicBot.js"
 }
