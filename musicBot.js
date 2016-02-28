@@ -534,9 +534,9 @@ function checkRole(id, user, role) {
                 var reply = "";
                 for(var i = 0; i < length; i++) {
                     if(i < (length-1))
-                        reply += (i+1).toString() + ")** " + songs[i].songName + " ** [" + songs[i].songLength + "]/ Ekleyen : " + songs[i].submitterName + "\r\n";
+                        reply += (i+1).toString() + ")** " + songs[i].songName + " ** [" + secondsToHms(songs[i].songLength) + "]/ Ekleyen : " + songs[i].submitterName + "\r\n";
                     else
-                        reply += (i+1).toString() + ")** " + songs[i].songName + " ** [" + songs[i].songLength + "]/ Ekleyen : " + songs[i].submitterName;
+                        reply += (i+1).toString() + ")** " + songs[i].songName + " ** [" + secondsToHms(songs[i].songLength) + "]/ Ekleyen : " + songs[i].submitterName;
                 }
                 if(length == 0) {
                     reply = "Çalma listesinde hiç şarkı yok.";
