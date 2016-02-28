@@ -19,7 +19,9 @@ var jsonFolder      = './json/',
     playListName    = null,
     playListIndex   = null,
     playListLength  = null,
-    stream          = null;
+    stream          = null,
+    calanKontrol    = false,
+    listeKontrol    = true;
 //}
 // <Requires> {
 try {
@@ -359,20 +361,22 @@ function checkRole(id, user, role) {
                                 bot.sendMessage(msg.channel, "**" + msg.sender + ", çalma listesine şarkı eklemeniz " + timeFormatString(banTime.hours, banTime.minutes, banTime.seconds) + " engellenmiştir.**");
                                 return;
                             }
-                        }
+                        }z
                     }
-                    var songs = Object.keys(songList).map(function(k) {return songList[k];});
-                    var exists = false;
-                    if(nowPlaying.hasOwnProperty("submitterID")) {
-                        if(nowPlaying.submitterID == msg.sender.id) {
-                            exists = true;
-                        }
-                    }
-                    if(!exists) {
-                        for(var i = 0; i < songs.length; i++) {
-                            if(songs[i].submitterID == msg.sender.id) {
+                    if(calanKontrol || listeKontrol) {
+                        var songs = Object.keys(songList).map(function(k) {return songList[k];});
+                        var exists = false;
+                        if(calanKontrol && nowPlaying.hasOwnProperty("submitterID")) {
+                            if(nowPlaying.submitterID == msg.sender.id) {
                                 exists = true;
-                                break;
+                            }
+                        }
+                        if(listeKontrol) {
+                            for(var i = 0; i < songs.length; i++) {
+                                if(songs[i].submitterID == msg.sender.id) {
+                                    exists = true;
+                                    break;
+                                }
                             }
                         }
                     }
