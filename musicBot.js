@@ -239,7 +239,7 @@ function playFromID(msg, suffix, pInfo) {
                     bot.voiceConnection.playRawStream(stream, {Volume : 0.1});
                     pTimeout = setTimeout(
                         function() {
-                            bot.sendMessage(msg.channel, "**Şarkı bitti.**");
+                            bot.sendMessage(msg.channel, "**Şarkı bitti.\n\n**");
                             stopPlaying();
                             playFromList(msg);
                         },
