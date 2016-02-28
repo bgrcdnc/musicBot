@@ -360,70 +360,73 @@ function checkRole(id, user, role) {
                                 return;
                             }
                         }
-                    }
-                    if(playLists.hasOwnProperty(suffix)) {
-                        playListName = suffix;
-                        playList = playLists[playListName].slice(0);
-                        playListIndex = 1;
-                        playListLength = playList.length;
-                        playFromList(msg);
-                    } else if(suffix) {
-                        playListName = null;
-                        playList = null;
-                        playListIndex = null;
-                        playListLength = null;
-                        if(getYoutubeIDFromLink(suffix)) {
-                               suffix = suffix.substr(suffix.indexOf('v=')+2, 11);
-                           }
-                       ytdl.getInfo("https://www.youtube.com/watch?v=" + suffix, null, function(err, videoInfo) {
-                            if(err) {
-                                console.log("Error ytdl.getInfo");
-                            }
-                            if(isset(videoInfo)) {
-                                var title = videoInfo.title;
-                                var songs = Object.keys(songList).map(function(k) {return songList[k];});
-                                if(songs.length < 10) {
-                                    if(nowPlaying.songID != suffix) {
-                                        var exists = false;
-                                        for(var i = 0; i < songs.length; i++) {
-                                            if(songs[i].songID == suffix) {
-                                                exists = true;
-                                                break;
+                    } else if(songList.hasOwnProperty(msg.sender.id)) {
+                        bot.sendMessage(msg.channel, "**" + msg.sender + ", zaten çalma listesinde bir şarkınız bulunuyor.**");
+                    } else {
+                        if(playLists.hasOwnProperty(suffix)) {
+                            playListName = suffix;
+                            playList = playLists[playListName].slice(0);
+                            playListIndex = 1;
+                            playListLength = playList.length;
+                            playFromList(msg);
+                        } else if(suffix) {
+                            playListName = null;
+                            playList = null;
+                            playListIndex = null;
+                            playListLength = null;
+                            if(getYoutubeIDFromLink(suffix)) {
+                                   suffix = suffix.substr(suffix.indexOf('v=')+2, 11);
+                               }
+                           ytdl.getInfo("https://www.youtube.com/watch?v=" + suffix, null, function(err, videoInfo) {
+                                if(err) {
+                                    console.log("Error ytdl.getInfo");
+                                }
+                                if(isset(videoInfo)) {
+                                    var title = videoInfo.title;
+                                    var songs = Object.keys(songList).map(function(k) {return songList[k];});
+                                    if(songs.length < 10) {
+                                        if(nowPlaying.songID != suffix) {
+                                            var exists = false;
+                                            for(var i = 0; i < songs.length; i++) {
+                                                if(songs[i].songID == suffix) {
+                                                    exists = true;
+                                                    break;
+                                                }
                                             }
-                                        }
-                                        if(!exists) {
-                                            songs[songs.length] = {
-                                                songName: title,
-                                                songID: suffix,
-                                                songLength: videoInfo.length_seconds,
-                                                submitterName: msg.sender.name,
-                                                submitterID: msg.sender.id
-                                            };
-                                            songList = {};
-                                            for(var i = 0; i < songs.length; i++)
-                                                songList[i] = songs[i];
-                                            updateSongList();
-                                            if(Object.keys(songList).length == 1 && pTimeout == null) {
-                                                playFromList(msg);
+                                            if(!exists) {
+                                                songs[songs.length] = {
+                                                    songName: title,
+                                                    songID: suffix,
+                                                    songLength: videoInfo.length_seconds,
+                                                    submitterName: msg.sender.name,
+                                                    submitterID: msg.sender.id
+                                                };
+                                                songList = {};
+                                                for(var i = 0; i < songs.length; i++)
+                                                    songList[i] = songs[i];
+                                                updateSongList();
+                                                if(Object.keys(songList).length == 1 && pTimeout == null) {
+                                                    playFromList(msg);
+                                                } else {
+                                                    bot.sendMessage(msg.channel, "**" + msg.sender.name + " şarkı listesine** \"" + title + "\" ** şarkısını ekledi.**");
+                                                }
                                             } else {
-                                                bot.sendMessage(msg.channel, "**" + msg.sender.name + " şarkı listesine** \"" + title + "\" ** şarkısını ekledi.**");
+                                                bot.sendMessage(msg.channel, "**" + msg.sender + ", eklemeye çalıştığınız şarkı zaten çalma listesinde var.**");
                                             }
-                                        } else {
-                                            bot.sendMessage(msg.channel, "**" + msg.sender + ", eklemeye çalıştığınız şarkı zaten çalma listesinde var.**");
                                         }
-                                    }
-                                    else {
-                                        bot.sendMessage(msg.channel, "**" + msg.sender + ", eklemeye çalıştığınız şarkı şu an zaten çalıyor.**");
+                                        else {
+                                            bot.sendMessage(msg.channel, "**" + msg.sender + ", eklemeye çalıştığınız şarkı şu an zaten çalıyor.**");
+                                        }
+                                    } else {
+                                        bot.sendMessage(msg.channel, "**" + msg.sender + ", çalma listesi şu an dolu, lütfen şarkı bittikten sonra tekrar deneyiniz.**");
                                     }
                                 } else {
-                                    bot.sendMessage(msg.channel, "**" + msg.sender + ", çalma listesi şu an dolu, lütfen şarkı bittikten sonra tekrar deneyiniz.**");
+                                    bot.sendMessage(msg.channel, "**" + msg.sender + ", şarkı eklenemedi!**");
                                 }
-                            } else {
-                                bot.sendMessage(msg.channel, "**" + msg.sender + ", şarkı eklenemedi!**");
-                            }
-                        });
-                    } else {
-                        bot.sendMessage(msg.channel, "**" + msg.sender + ", şarkı bulunamıyor!**");
+                            });
+                        } else {
+                            bot.sendMessage(msg.channel, "**" + msg.sender + ", şarkı bulunamıyor!**");
+                        }
                     }
             } catch(e) {
                 console.log("Error çal at " + msg.channel.name + " : " + e);
