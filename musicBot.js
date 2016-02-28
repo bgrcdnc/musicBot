@@ -360,9 +360,23 @@ function checkRole(id, user, role) {
                                 return;
                             }
                         }
-                    } else if(songList.hasOwnProperty(msg.sender.id)) {
-                        bot.sendMessage(msg.channel, "**" + msg.sender + ", zaten çalma listesinde bir şarkınız bulunuyor.**");
-                    } else {
+                    }
+                    var songs = Object.keys(songList).map(function(k) {return songList[k];});
+                    var exists = false;
+                    if(nowPlaying.hasOwnProperty("submitterID")) {
+                        if(nowPlaying.submitterID == msg.sender.id) {
+                            exists = true;
+                        }
+                    }
+                    if(!exists) {
+                        for(var i = 0; i < songs.length; i++) {
+                            if(songs[i].submitterID == msg.sender.id) {
+                                exists = true;
+                                break;
+                            }
+                        }
+                    }
+                    if(!exists) {
                         if(playLists.hasOwnProperty(suffix)) {
                             playListName = suffix;
                             playList = playLists[playListName].slice(0);
@@ -427,6 +441,8 @@ function checkRole(id, user, role) {
                         } else {
                             bot.sendMessage(msg.channel, "**" + msg.sender + ", şarkı bulunamıyor!**");
                         }
+                    } else {
+                        bot.sendMessage(msg.channel, "**" + msg.sender + ", zaten çalma listesinde bir şarkınız bulunuyor.**");
                     }
             } catch(e) {
                 console.log("Error çal at " + msg.channel.name + " : " + e);
