@@ -389,10 +389,13 @@ function checkRole(id, user, role) {
                             playListLength = playList.length;
                             playFromList(msg);
                         } else if(suffix) {
-                            playListName = null;
-                            playList = null;
-                            playListIndex = null;
-                            playListLength = null;
+                            if(playListName && playList || playListIndex || playListLength) {
+                                bot.sendMessage(msg.channel, "**\"" + playListName + "\" çalma listesinden çalma durduruldu, çalan şarkı bittikten sonra normal çalma listesine geçilecek.**");
+                                playListName = null;
+                                playList = null;
+                                playListIndex = null;
+                                playListLength = null;
+                            }
                             if(getYoutubeIDFromLink(suffix)) {
                                    suffix = suffix.substr(suffix.indexOf('v=')+2, 11);
                                }
@@ -539,9 +542,9 @@ function checkRole(id, user, role) {
                 var reply = "";
                 for(var i = 0; i < length; i++) {
                     if(i < (length-1))
-                        reply += (i+1).toString() + ")** " + songs[i].songName + " ** [" + secondsToHms(songs[i].songLength) + "]/ Ekleyen : " + songs[i].submitterName + "\r\n";
+                        reply += (i+1).toString() + ")** " + songs[i].songName + " ** [" + songs[i].songLength + "]/ Ekleyen : " + songs[i].submitterName + "\r\n";
                     else
-                        reply += (i+1).toString() + ")** " + songs[i].songName + " ** [" + secondsToHms(songs[i].songLength) + "]/ Ekleyen : " + songs[i].submitterName;
+                        reply += (i+1).toString() + ")** " + songs[i].songName + " ** [" + songs[i].songLength + "]/ Ekleyen : " + songs[i].submitterName;
                 }
                 if(length == 0) {
                     reply = "Çalma listesinde hiç şarkı yok.";
