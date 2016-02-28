@@ -186,7 +186,7 @@ function playFromList(msg) {
     }
     if(playList) {
         if(playList.length > 0) {
-            bot.sendMessage(msg.channel, "**\"" + playListName + "\" çalma listesinden çalınıyor. (" + playListIndex++ + "/" + playListLength + ")**");
+            bot.sendMessage(msg.channel, "**\"" + playListName + "\" çalma listesinden çalınıyor. (" + playListIndex++ + "/" + playListLength + ")\nHerhangi bir şarkı eklendiğinde \"" + playListName + "\" çalma listesinden çalma durdurulacaktır.**");
             var index = Math.floor(Math.random() * playList.length);
             var sid = playList[index];
             playList.splice(index, 1);
@@ -220,6 +220,7 @@ function playFromID(msg, suffix, pInfo) {
     try {
         if(bot.voiceConnection) {
             if(pTimeout) { // eğer şarkının bitişi için bir timeout atanmışsa
+                bot.sendMessage(msg.channel, "**\"" + playListName + "\" çalma listesinden çalma durduruldu.**");
                 stopPlaying();
             }
             if(!isset(pInfo))
