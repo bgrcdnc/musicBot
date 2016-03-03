@@ -39,9 +39,7 @@ try {
 
 var fs              = require('fs'),
     path            = require('path'),
-    request         = require("request"),
-    ytdl            = require('ytdl-core'),
-    youtubeStream   = require('youtube-audio-stream');
+    ytdl            = require('ytdl-core');
 //}
 // <JSON> {
 try {
@@ -235,8 +233,11 @@ function playFromID(msg, suffix, pInfo) {
                     } else {
                         bot.sendMessage(msg.channel, "**Çalıyor:** " + videoInfo.title + " **["+ secondsToHms(videoInfo.length_seconds) + "]" + " / Ekleyen : " + msg.sender.name + "**");
                     }
-                    stream = request("https://request-bgrcdnc.c9users.io:8081/?data=" + suffix);
-                    bot.voiceConnection.playRawStream(stream, {Volume : 0.1});
+                    //var yturl = "https://request-kapkeyk.c9users.io:8081/?data=" + suffix;
+                    //var stream = request(yturl);
+                    //bot.voiceConnection.playRawStream(stream,{Volume : 0.1});
+                    var video = "http://www.youtube.com/watch?v=" + suffix;
+                    bot.voiceConnection.playRawStream(ytdl(video, {filter: 'audioonly'}), {Volume: 0.1});
                     pTimeout = setTimeout(
                         function() {
                             bot.sendMessage(msg.channel, "**Şarkı bitti.\n\n**");
@@ -315,29 +316,6 @@ function checkRole(id, user, role) {
             }
         }
     },
-    "radyo": {
-	    usage:"<radyo link>",
-        description:"Gönderilen radyoyu çalar.",
-	    process: function(bot,msg,suffix) {
-	        try {
-	                if(checkPermission(msg.sender.id,"dev")) {
-	                    if(suffix) {
-	                        if(nowPlaying.hasOwnProperty("songName") && nowPlaying.hasOwnProperty("submitterName") && nowPlaying.songName && nowPlaying.submitterName) {
-	                            bot.sendMessage(msg.channel, "**" + msg.sender + ", lütfen çalma listesi bittikten sonra tekrar deneyiniz.**");
-	                        } else {
-                                var stream = request(suffix);
-                                bot.voiceConnection.playRawStream(stream,{Volume : 0.1});
-                                bot.sendMessage(msg.channel, "**Radyodan çalınıyor.**");
-	                        }
-	                    }
-	                } else {
-	                    bot.sendMessage(msg.channel, "**" + msg.sender + ", bu komutu kullanmak için gerekli yetkiye sahip değilsiniz.**");
-	                }
-	        } catch(e) {
-	            console.log("Error radyo at " + msg.channel.name + " : " + e);
-	        }
-	    }
-	},
 	"çal": {
         usage:"<youtube link ya da id>",
         description: "Verilen şarkıyı çalar/çalma listesine ekler.",
