@@ -21,7 +21,7 @@ var jsonFolder      = './json/',
     playListLength  = null,
     stream          = null,
     calanKontrol    = false,
-    listeKontrol    = true;
+    listeKontrol    = false;
 //}
 // <Requires> {
 try {
@@ -237,7 +237,7 @@ function playFromID(msg, suffix, pInfo) {
                     //var stream = request(yturl);
                     //bot.voiceConnection.playRawStream(stream,{Volume : 0.1});
                     var video = "http://www.youtube.com/watch?v=" + suffix;
-                    bot.voiceConnection.playRawStream(ytdl(video, {filter: 'audioonly', quality: 171}), {Volume: 0.1});
+                    bot.voiceConnection.playRawStream(ytdl(video, {filter: 'audioonly'}), {Volume: 0.1});
                     pTimeout = setTimeout(
                         function() {
                             bot.sendMessage(msg.channel, "**Şarkı bitti.\n\n**");
@@ -927,7 +927,6 @@ if(isset(AuthDetails.logtoken)) {
     });
 }
 //}
-
 
 process.on('uncaughtException', function(err) {
   // Handle ECONNRESETs caused by `next` or `destroy`
