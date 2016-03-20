@@ -12,11 +12,9 @@
   "license": "GNU",
   "dependencies": {
     "discord.js": "^6.0.0",
-    "nodesu": "^0.2.1",
     "request": ">=2.58.0",
     "underscore": "1.8.x",
     "ytdl-core": "0.7.10",
-    "youtube-audio-stream": "0.0.19"
   },
   "scripts": {
     "start": "node musicBot.js"
