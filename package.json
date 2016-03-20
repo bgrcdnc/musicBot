@@ -14,7 +14,11 @@
     "discord.js": "^6.0.0",
     "request": ">=2.58.0",
     "underscore": "1.8.x",
+<<<<<<< HEAD
     "ytdl-core": "0.7.10",
+=======
+    "ytdl-core": "0.7.10"
+>>>>>>> c8435ac768c17a631d8283913b3d11808fc7a48a
   },
   "scripts": {
     "start": "node musicBot.js"
