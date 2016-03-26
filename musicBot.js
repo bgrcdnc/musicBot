@@ -549,10 +549,23 @@ function checkRole(id, user, role) {
                 if(checkPermission(msg.sender.id, "admin") && suffix) {
                     var args = suffix.split(" ");
                     var cmd = args.shift();
-                    var index = parseInt(args.join(" "), 10);
+                    var index = parseInt(args.join(" "), 10) - 1;
                     if(cmd == "sil" && isNumeric(index)) {
                         if(index > -1) {
-                            songs.splice(index, 1);
+                            var songs = Object.keys(songList).map(function(k) {return songList[k];});
+                            if(songs.length > index) {
+                                songs.splice(index, 1);
+                                songList = {};
+                                for(var i = 0; i < songs.length; i++) {
+                                    songList[i] = songs[i];
+                                }
+                                updateSongList();
+                                bot.sendMessage(msg.channel, "Çalma listesindeki **" + (index+1) + "** numaralı şarkı silindi.");
+                            } else {
+                                bot.sendMessage(msg.channel, "Çalma listesinde **" + (index+1) + "** numaralı şarkı bulunamadı.");
+                            }
+                        } else {
+                            bot.sendMessage(msg.channel, "Çalma listesinde **" + (index+1) + "** numaralı şarkı bulunamadı.");
                         }
                     }
                 } else {
