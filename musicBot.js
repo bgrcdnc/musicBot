@@ -223,6 +223,9 @@ function playFromList(msg) {
         bot.sendMessage(msg.channel, "**Hata: Çalma listesi bulunamadı, lütfen bir admin ile iletişime geçin.**");
     }
 }
+function isNumeric(n) {
+  return !isNaN(parseFloat(n)) && isFinite(n);
+}
 
 function playFromID(msg, suffix, pInfo) {
     try {
@@ -542,22 +545,33 @@ function checkRole(id, user, role) {
         description: "Çalma listesini gösterir.",
         process: function(bot,msg,suffix) {
             try {
-                var songs = Object.keys(songList).map(function(k) {return songList[k];});
-                var length = songs.length;
-                if(length > 10) {
-                    length = 10;
+                if(checkPermission(msg.sender.id, admin) && suffix) {
+                    var args = suffix.split(" ");
+                    var cmd = args.shift();
+                    var index = parseInt(args.join(" "), 10);
+                    if(cmd == "sil" && isNumeric(index)) {
+                        if(index > -1) {
+                            songs.splice(index, 1);
+                        }
+                    }
+                } else {
+                    var songs = Object.keys(songList).map(function(k) {return songList[k];});
+                    var length = songs.length;
+                    if(length > 10) {
+                        length = 10;
+                    }
+                    var reply = "";
+                    for(var i = 0; i < length; i++) {
+                        if(i < (length-1))
+                            reply += (i+1).toString() + ")** " + songs[i].songName + " ** [" + songs[i].songLength + "]/ Ekleyen : " + songs[i].submitterName + "\r\n";
+                        else
+                            reply += (i+1).toString() + ")** " + songs[i].songName + " ** [" + songs[i].songLength + "]/ Ekleyen : " + songs[i].submitterName;
+                    }
+                    if(length == 0) {
+                        reply = "Çalma listesinde hiç şarkı yok.";
+                    }
+                    bot.sendMessage(msg.channel, reply);
                 }
-                var reply = "";
-                for(var i = 0; i < length; i++) {
-                    if(i < (length-1))
-                        reply += (i+1).toString() + ")** " + songs[i].songName + " ** [" + songs[i].songLength + "]/ Ekleyen : " + songs[i].submitterName + "\r\n";
-                    else
-                        reply += (i+1).toString() + ")** " + songs[i].songName + " ** [" + songs[i].songLength + "]/ Ekleyen : " + songs[i].submitterName;
-                }
-                if(length == 0) {
-                    reply = "Çalma listesinde hiç şarkı yok.";
-                }
-                bot.sendMessage(msg.channel, "**"+reply+"**");
             } catch(e) {
                 console.log("Error liste at " + msg.channel.name + " : " + e);
             }
