@@ -545,7 +545,7 @@ function checkRole(id, user, role) {
         description: "Çalma listesini gösterir.",
         process: function(bot,msg,suffix) {
             try {
-                if(checkPermission(msg.sender.id, admin) && suffix) {
+                if(checkPermission(msg.sender.id, "admin") && suffix) {
                     var args = suffix.split(" ");
                     var cmd = args.shift();
                     var index = parseInt(args.join(" "), 10);
