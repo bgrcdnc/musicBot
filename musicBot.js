@@ -21,7 +21,7 @@ var jsonFolder      = './json/',
     playListLength  = null,
     stream          = null,
     calanKontrol    = false,
-    listeKontrol    = true;
+    listeKontrol    = false;
 //}
 // <Requires> {
 try {
@@ -35,6 +35,15 @@ try {
 } catch (e) {
 	console.log("Please create an auth.json like auth.json.example with at least an email and password.");
 	process.exit(1);
+}
+
+try{
+	Config = require(jsonFolder + "config.json");
+} catch(e){ //no config file, use defaults
+	Config.debug = false;
+	Config.respondToInvalid = false;
+	Config.freeMusic = true;
+	updateConfig();
 }
 
 var fs              = require('fs'),
@@ -75,6 +84,7 @@ function updateSongBanned(){updateJSON("songBanned.json",songBanned);}
 function updateAuth(){updateJSON("auth.json",AuthDetails);}
 function updateAlias(){updateJSON("alias.json",alias);}
 function updatePlayLists(){updateJSON("playLists.json",playLists);}
+function updateConfig(){updateJSON("config.json", Config);}
 //}
 // <Functions> {
 function secondsToHms(d) {
@@ -213,6 +223,9 @@ function playFromList(msg) {
         bot.sendMessage(msg.channel, "**Hata: Çalma listesi bulunamadı, lütfen bir admin ile iletişime geçin.**");
     }
 }
+function isNumeric(n) {
+  return !isNaN(parseFloat(n)) && isFinite(n);
+}
 
 function playFromID(msg, suffix, pInfo) {
     try {
@@ -237,7 +250,7 @@ function playFromID(msg, suffix, pInfo) {
                     //var stream = request(yturl);
                     //bot.voiceConnection.playRawStream(stream,{Volume : 0.1});
                     var video = "http://www.youtube.com/watch?v=" + suffix;
-                    bot.voiceConnection.playRawStream(ytdl(video, {filter: 'audioonly', quality: 171}), {Volume: 0.1});
+                    bot.voiceConnection.playRawStream(ytdl(video, {filter: 'audioonly'}), {Volume: 0.1});
                     pTimeout = setTimeout(
                         function() {
                             bot.sendMessage(msg.channel, "**Şarkı bitti.\n\n**");
@@ -313,6 +326,26 @@ function checkRole(id, user, role) {
                 bot.sendMessage(msg.channel, msg.sender+" pong!");
             } catch(e) {
                 console.log("Error ping at " + msg.channel.name + " : " + e);
+            }
+        }
+    },
+    "sıradakikısıt": {
+        hidden:"1",
+        description: "ıvır zıvır işler",
+        process: function(bot, msg, suffix) {
+            try {
+                if(checkPermission(msg.sender.id, "admin")) {
+                    if(Config.freeMusic) {
+                        Config.freeMusic = false;
+                        bot.sendMessage(msg.channel, "Şarkı geçmek artık **kısıtlı**.");
+                    } else {
+                        Config.freeMusic = true;
+                        bot.sendMessage(msg.channel, "Şarkı geçmek artık **serbest**.");
+                    }
+                    updateConfig();
+                }
+            } catch(e) {
+                console.log("Error sıradakikısıt at " + msg.channel.name + " : " + e);
             }
         }
     },
@@ -512,22 +545,33 @@ function checkRole(id, user, role) {
         description: "Çalma listesini gösterir.",
         process: function(bot,msg,suffix) {
             try {
-                var songs = Object.keys(songList).map(function(k) {return songList[k];});
-                var length = songs.length;
-                if(length > 10) {
-                    length = 10;
+                if(checkPermission(msg.sender.id, admin) && suffix) {
+                    var args = suffix.split(" ");
+                    var cmd = args.shift();
+                    var index = parseInt(args.join(" "), 10);
+                    if(cmd == "sil" && isNumeric(index)) {
+                        if(index > -1) {
+                            songs.splice(index, 1);
+                        }
+                    }
+                } else {
+                    var songs = Object.keys(songList).map(function(k) {return songList[k];});
+                    var length = songs.length;
+                    if(length > 10) {
+                        length = 10;
+                    }
+                    var reply = "";
+                    for(var i = 0; i < length; i++) {
+                        if(i < (length-1))
+                            reply += (i+1).toString() + ")** " + songs[i].songName + " ** [" + songs[i].songLength + "]/ Ekleyen : " + songs[i].submitterName + "\r\n";
+                        else
+                            reply += (i+1).toString() + ")** " + songs[i].songName + " ** [" + songs[i].songLength + "]/ Ekleyen : " + songs[i].submitterName;
+                    }
+                    if(length == 0) {
+                        reply = "Çalma listesinde hiç şarkı yok.";
+                    }
+                    bot.sendMessage(msg.channel, reply);
                 }
-                var reply = "";
-                for(var i = 0; i < length; i++) {
-                    if(i < (length-1))
-                        reply += (i+1).toString() + ")** " + songs[i].songName + " ** [" + songs[i].songLength + "]/ Ekleyen : " + songs[i].submitterName + "\r\n";
-                    else
-                        reply += (i+1).toString() + ")** " + songs[i].songName + " ** [" + songs[i].songLength + "]/ Ekleyen : " + songs[i].submitterName;
-                }
-                if(length == 0) {
-                    reply = "Çalma listesinde hiç şarkı yok.";
-                }
-                bot.sendMessage(msg.channel, "**"+reply+"**");
             } catch(e) {
                 console.log("Error liste at " + msg.channel.name + " : " + e);
             }
@@ -927,7 +971,6 @@ if(isset(AuthDetails.logtoken)) {
     });
 }
 //}
-
 
 process.on('uncaughtException', function(err) {
   // Handle ECONNRESETs caused by `next` or `destroy`
