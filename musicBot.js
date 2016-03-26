@@ -37,6 +37,15 @@ try {
 	process.exit(1);
 }
 
+try{
+	Config = require(jsonFolder + "config.json");
+} catch(e){ //no config file, use defaults
+	Config.debug = false;
+	Config.respondToInvalid = false;
+	Config.freeMusic = true;
+	updateConfig();
+}
+
 var fs              = require('fs'),
     path            = require('path'),
     ytdl            = require('ytdl-core');
@@ -75,6 +84,7 @@ function updateSongBanned(){updateJSON("songBanned.json",songBanned);}
 function updateAuth(){updateJSON("auth.json",AuthDetails);}
 function updateAlias(){updateJSON("alias.json",alias);}
 function updatePlayLists(){updateJSON("playLists.json",playLists);}
+function updateConfig(){updateJSON("config.json", Config);}
 //}
 // <Functions> {
 function secondsToHms(d) {
@@ -313,6 +323,26 @@ function checkRole(id, user, role) {
                 bot.sendMessage(msg.channel, msg.sender+" pong!");
             } catch(e) {
                 console.log("Error ping at " + msg.channel.name + " : " + e);
+            }
+        }
+    },
+    "sıradakikısıt": {
+        hidden:"1",
+        description: "ıvır zıvır işler",
+        process: function(bot, msg, suffix) {
+            try {
+                if(checkPermission(msg.sender.id, "admin")) {
+                    if(Config.freeMusic) {
+                        Config.freeMusic = false;
+                        bot.sendMessage(msg.channel, "Şarkı geçmek artık **kısıtlı**.");
+                    } else {
+                        Config.freeMusic = true;
+                        bot.sendMessage(msg.channel, "Şarkı geçmek artık **serbest**.");
+                    }
+                    updateConfig();
+                }
+            } catch(e) {
+                console.log("Error sıradakikısıt at " + msg.channel.name + " : " + e);
             }
         }
     },
