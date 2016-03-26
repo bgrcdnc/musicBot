@@ -37,10 +37,11 @@ try {
 	process.exit(1);
 }
 
+var Config = {};
 try{
-	var Config = require(jsonFolder + "config.json");
+	Config = require(jsonFolder + "config.json");
 } catch(e){ //no config file, use defaults
-	var Config.debug = false;
+    Config.debug = false;
 	Config.respondToInvalid = false;
 	Config.freeMusic = true;
 	updateConfig();
