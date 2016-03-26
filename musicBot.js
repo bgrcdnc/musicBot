@@ -38,9 +38,9 @@ try {
 }
 
 try{
-	Config = require(jsonFolder + "config.json");
+	var Config = require(jsonFolder + "config.json");
 } catch(e){ //no config file, use defaults
-	Config.debug = false;
+	var Config.debug = false;
 	Config.respondToInvalid = false;
 	Config.freeMusic = true;
 	updateConfig();
