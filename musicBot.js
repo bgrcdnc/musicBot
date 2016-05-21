@@ -172,8 +172,8 @@ function isset(arg) {
 }
 
 function stopPlaying() {
-    if(stream)
-        stream.end();
+    /*if(stream)
+        stream.end();*/
     if(bot.voiceConnection)
         bot.voiceConnection.stopPlaying();
     clearTimeout(pTimeout);
@@ -251,15 +251,21 @@ function playFromID(msg, suffix, pInfo) {
                     //var stream = request(yturl);
                     //bot.voiceConnection.playRawStream(stream,{Volume : 0.1});
                     var video = "http://www.youtube.com/watch?v=" + suffix;
-                    bot.voiceConnection.playRawStream(ytdl(video, {filter: 'audioonly'}), {Volume: 0.1});
-                    pTimeout = setTimeout(
+                    bot.voiceConnection.playRawStream(ytdl(video, {filter: 'audioonly'}), {Volume: 0.1}).catch(console.log).then(function(intent) {
+                        intent.on('end', function() {
+                            bot.sendMessage(msg.channel, "**Şarkı bitti.\n\n**");
+                            stopPlaying();
+                            playFromList(msg);
+                        })
+                    });
+                    /*pTimeout = setTimeout(
                         function() {
                             bot.sendMessage(msg.channel, "**Şarkı bitti.\n\n**");
                             stopPlaying();
                             playFromList(msg);
                         },
                         (parseInt(videoInfo.length_seconds,10) + 2) * 1000
-                    );
+                    );*/
                     if(pInfo) {
                         nowPlaying = {
                             startTime: Date(),
@@ -324,7 +330,7 @@ function checkRole(id, user, role) {
         description: "Bot açık ise \"pong!\" cevabını gönderir.",
         process: function(bot, msg, suffix) {
             try {
-                bot.sendMessage(msg.channel, msg.sender+" pong!");
+                bot.sendMessage(msg.channel, msg.sender.name + ", pong!", (e, sentMsg) => { bot.updateMessage(sentMsg, msg.sender.name + ", pong! (" + (sentMsg.timestamp - msg.timestamp) + "ms)") });
             } catch(e) {
                 console.log("Error ping at " + msg.channel.name + " : " + e);
             }
@@ -347,6 +353,20 @@ function checkRole(id, user, role) {
                 }
             } catch(e) {
                 console.log("Error sıradakikısıt at " + msg.channel.name + " : " + e);
+            }
+        }
+    },
+    "link": {
+        hidden:"1",
+        description: "link çalar",
+        process: function(bot, msg, suffix) {
+            if(checkPermission(msg.sender.id, "admin")) {
+                try {
+                    bot.voiceConnection.playFile(suffix);
+                    bot.sendMessage(msg.channel, "\"" + suffix + "\" çalınıyor.");
+                } catch(e) {
+                    console.log("Error link at " + msg.channel.name + " : " + e);
+                }
             }
         }
     },
@@ -664,6 +684,22 @@ function checkRole(id, user, role) {
 	    }
 	},
     /*land of hidden*/
+    "changename": {
+        hidden: "1",
+        usage: "<isim>",
+        description: "botun ismini değiştir",
+        process: function(bot,msg,suffix) {
+            if(checkPermission(msg.sender.id,"dev")) {
+                if(suffix) {
+                    console.log("Changing bots name to : " + suffix);
+                    bot.setUsername(suffix, function (error) {
+                        bot.sendMessage(msg.channel, error);
+                    });
+                    bot.deleteMessage(msg);
+                }
+            }
+        }
+    },
     "r":{
         disabled:"1",
         hidden:"1",
@@ -951,7 +987,7 @@ bot.on("message", function (msg) {
 		else if(cmd) {
 			try{
 			    if(!cmd.disabled) {
-			        if(msg.channel.server.id == "134666472864743424" && msg.channel.id == "150713395589545984" || cmdTxt == "t" || cmdTxt == "alias") {
+			        if(msg.channel.server.id == "134666472864743424" && msg.channel.id == "150713395589545984") {
 				        cmd.process(bot,msg,suffix);
 			        } else {
 			            bot.sendMessage(msg.channel, "Bot sadece <#150713395589545984> kanalında çalışmaktadır.");
@@ -971,18 +1007,18 @@ bot.on("message", function (msg) {
     }
 });
 if(isset(AuthDetails.logtoken)) {
-    bot.loginWithToken(AuthDetails.logtoken, function(err,token) {if(err) {console.log(err);}});
+    console.log("Loging in with token\n");
+    bot.loginWithToken(AuthDetails.logtoken, AuthDetails.email, AuthDetails.password);
 } else {
-    bot.login(AuthDetails.email, AuthDetails.password, function(error,token) {
-        try {
-            if(isset(token)) {
-                AuthDetails["logtoken"] = token;
-                updateAuth();
-            }
-        } catch(e) {
-
-        }
-    });
+	console.log("Loging in with email/password\n");
+    bot.login(AuthDetails.email, AuthDetails.password).then(success).catch(err);
+    function success(token) {
+        AuthDetails.logtoken = token;
+        updateAuth();
+    }
+    function err(error) {
+        console.log(error);
+    }
 }
 //}
 
